@@ -84,10 +84,12 @@ check_color(spin())
 
 
 function play() {
-    rl.question('What is your name? ', (name) => {
-        console.log(`Hello, ${name}!`);
+    rl.question('What is your name? \n', (name) => {
+        rl.write('='.repeat(30) + '\n\n');
+        console.log(`Hello, ${name}! \nWelcome to Roulette`);
+        rl.question(``)
         rl.close();
-    });
+    });     
 }
 
 play()
