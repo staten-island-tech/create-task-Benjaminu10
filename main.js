@@ -42,7 +42,6 @@ const roulette = [
   { num: "36", color: "black", parity: "even" }
 ];
 
-let money = 1000
 
 const readline = require('readline');
 
@@ -82,14 +81,42 @@ function check_num(result, guess) {
 
 check_color(spin())
 
-
-function play() {
-    rl.question('What is your name? \n', (name) => {
-        rl.write('='.repeat(30) + '\n\n');
-        console.log(`Hello, ${name}! \nWelcome to Roulette`);
-        rl.question(``)
-        rl.close();
-    });     
+function betAmount(money) {
+    rl.question(`You have ${money}. How much would you like to bet?\n`, (betAMT) => {
+        if (betAMT > money || betAMT <= 0) {
+            console.log("Bet is INVALID")
+            betAmount(money);
+        } else {
+            console.log("TEST")
+        }
+    })
 }
 
-play()
+function betType() {
+    rl.question(`What type of bet would you like to make? [n]umber OR [c]olor\n`, (betTYPE) => {
+        if (betTYPE.toLowerCase() === "n") {
+            console.log("TEST")
+        } else if (betTYPE.toLowerCase() === "c") {
+            console.log("TEST2")
+        } else {
+            console.log("Invalid bet type.")
+            betType()
+        };
+        rl.close();
+    })
+}
+
+function play(money) {
+        rl.question('Press ENTER to Start', (asda) => {
+            rl.write('='.repeat(30) + '\n\n');
+            console.log(`Hello! \nWelcome to Roulette`);
+            betAmount(money);
+            betType()
+        });
+    if (money === 0) {
+        console.log("You have lost all your money.")
+        rl.close();
+    }
+}
+
+play(1000)
