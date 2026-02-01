@@ -50,6 +50,10 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+function ask(q) {
+  return new Promise(resolve => rl.question(q, resolve));
+}
+
 // rl.question('What is your name? ', (name) => {
 //   console.log(`Hello, ${name}!`);
 //   rl.close();
@@ -57,66 +61,102 @@ const rl = readline.createInterface({
 
 function spin() {
     const result = roulette[Math.floor(Math.random() * 38)]
-    console.log(result)
     return result
 }
 
-function check_color(num) {
-    if (num.color === "red") {
-        console.log("red");
-    } else if (num.color === "black") {
-        console.log("black");
-    } else {
-        console.log("green")
+async function play(money) {
+    await ask("Press ENTER to Start\n");
+
+    console.log("=".repeat(30));
+    console.log("Hello!\nWelcome to Roulette\n\n");
+
+    while (money > 0) {
+    let bet;
+
+    while (true) {
+      bet = Number(
+        await ask(`You have ${money}. How much would you like to bet?\n\n`)
+      );
+
+      if (bet > 0 && bet <= money) break;
+      console.log("Bet is INVALID\n\n");
     }
-}
 
-function check_num(result, guess) {
-    if (result.num === guess.toLowerCase()) {
-        console.log("correct");
-    } else {
-        console.log("wrong")
+    let type;
+
+    while (true) {
+      type = (
+        await ask(
+          "What type of bet would you like to make? [n]umber OR [c]olor\n\n"
+        )
+      ).toLowerCase();
+
+      if (type === "n" || type === "c") break;
+      console.log("Invalid bet type.\n\n");
     }
-}
 
-check_color(spin())
+    const result = spin();
 
-function betAmount(money) {
-    rl.question(`You have ${money}. How much would you like to bet?\n`, (betAMT) => {
-        if (betAMT > money || betAMT <= 0) {
-            console.log("Bet is INVALID")
-            betAmount(money);
-        } else {
-            console.log("TEST")
+    let win = false;
+
+    if (type === "c") {
+      let guess;
+
+      while (true) {
+        guess = (
+          await ask("Choose a color (red / black): ")
+        ).toLowerCase();
+
+        if (guess === "red" || guess === "black") break;
+        console.log("Invalid color.");
+      }
+
+      if (result.color === guess) {
+        win = true;
+      }
+    } else if (type === "n") {
+      let guess;
+
+      while (true) {
+        guess = (
+          await ask("Choose a number (0-36 or 00): ")
+        ).toLowerCase();
+
+        if (
+          guess === "00" ||
+          (!isNaN(guess) &&
+            Number(guess) >= 0 &&
+            Number(guess) <= 36)
+        ) {
+          break;
         }
-    })
-}
 
-function betType() {
-    rl.question(`What type of bet would you like to make? [n]umber OR [c]olor\n`, (betTYPE) => {
-        if (betTYPE.toLowerCase() === "n") {
-            console.log("TEST")
-        } else if (betTYPE.toLowerCase() === "c") {
-            console.log("TEST2")
-        } else {
-            console.log("Invalid bet type.")
-            betType()
-        };
-        rl.close();
-    })
-}
+        console.log("Invalid number.");
+      }
 
-function play(money) {
-        rl.question('Press ENTER to Start', (asda) => {
-            rl.write('='.repeat(30) + '\n\n');
-            console.log(`Hello! \nWelcome to Roulette`);
-            betAmount(money);
-            betType()
-        });
-    if (money === 0) {
-        console.log("You have lost all your money.")
-        rl.close();
+      if (result.num === guess) {
+        win = true;
+      }
     }
+
+    if (win) {
+      if (type === "c") {
+        money += bet;
+        console.log("You won!");
+      } else {
+        money += bet * 35;
+        console.log("You won!");
+      }
+    } else {
+      money -= bet;
+      console.log("You lost.");
+    }
+
+    console.log("Current money:", money);
+  }
+
+  console.log("You have lost all your money.\n");
+  rl.close();
 }
 
 play(1000)
