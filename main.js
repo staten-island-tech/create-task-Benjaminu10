@@ -78,7 +78,7 @@ async function play(money) {
         await ask(`You have ${money}. How much would you like to bet?\n\n`)
       );
 
-      if (bet > 0 && bet <= money) break;
+      if (bet > 0.09 && bet <= money) break;
       console.log("Bet is INVALID\n\n");
     }
 
